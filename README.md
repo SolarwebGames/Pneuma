@@ -21,7 +21,7 @@ To use Pneuma in your Unity project, add it via the Package Manager:
 
 1. Open the **Package Manager** in Unity (`Window > Package Manager`).
 2. Click the **+** icon and select **Add package from git URL...**
-3. Enter `https://github.com/SolarWeb/Pneuma.git`.
+3. Enter `https://github.com/SolarwebGames/Pneuma.git`.
 
 #### Importing Samples
 Once installed, import samples through the Package Manager:
