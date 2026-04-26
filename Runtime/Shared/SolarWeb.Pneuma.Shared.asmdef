@@ -1,0 +1,17 @@
+{
+    "name": "SolarWeb.Pneuma.Shared",
+    "rootNamespace": "SolarWeb.Pneuma.Shared",
+    "references": [
+        "Unity.Mathematics",
+        "Unity.Collections"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

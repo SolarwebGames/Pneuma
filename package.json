@@ -1,0 +1,27 @@
+{
+  "name": "com.solarweb.pneuma",
+  "version": "0.1.0",
+  "displayName": "Pneuma",
+  "description": "A high-performance atmospheric simulation system using Unity's Job System and Burst compiler.",
+  "author": {
+    "name": "Solarweb Games, LLC"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SolarwebGames/Pneuma.git"
+  },
+  "unity": "2022.3",
+  "dependencies": {
+    "com.unity.burst": "1.8.27",
+    "com.unity.mathematics": "1.3.2",
+    "com.unity.collections": "2.6.5"
+  },
+  "samples": [
+    {
+      "displayName": "Basic Simulation",
+      "description": "A simple example demonstrating how to initialize and update the Pneuma atmospheric simulation.",
+      "path": "Samples~/BasicSimulation"
+    }
+  ]
+}

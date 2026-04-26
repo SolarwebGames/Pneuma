@@ -1,0 +1,19 @@
+{
+    "name": "SolarWeb.Pneuma.Jobs",
+    "rootNamespace": "SolarWeb.Pneuma.Jobs",
+    "references": [
+        "SolarWeb.Pneuma.Shared",
+        "Unity.Burst",
+        "Unity.Mathematics",
+        "Unity.Collections"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
