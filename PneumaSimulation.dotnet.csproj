@@ -30,10 +30,4 @@
   <ItemGroup>
     <Compile Include="Runtime\Simulation\**\*.cs" />
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="../Kalyphos/Mod/1.6/Assemblies/" />
-    <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="../Kalyphos/Mod/1.6/Assemblies/" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
-  </Target>
-
 </Project>
