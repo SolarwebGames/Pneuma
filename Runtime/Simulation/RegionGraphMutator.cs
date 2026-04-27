@@ -128,18 +128,33 @@ namespace SolarWeb.Pneuma.Simulation
       State.RegionPhysicsBuffer.RegionVolumes[dynRegIdx] = cellVol;
       State.RegionPhysicsBuffer.RegionVolumes[parentRegIdx] -= cellVol;
 
-      float parentStructCap = State.RegionPhysicsBuffer.StructuralThermalCapacity[parentRegIdx];
-      float dynStructCap = parentStructCap * frac;
-      State.RegionPhysicsBuffer.StructuralThermalCapacity[dynRegIdx] = dynStructCap;
-      State.RegionPhysicsBuffer.StructuralThermalCapacity[parentRegIdx] = parentStructCap - dynStructCap;
+      float parentECap = State.RegionPhysicsBuffer.EnclosingThermalCapacity[parentRegIdx];
+      float dynECap = parentECap * frac;
+      State.RegionPhysicsBuffer.EnclosingThermalCapacity[dynRegIdx] = dynECap;
+      State.RegionPhysicsBuffer.EnclosingThermalCapacity[parentRegIdx] = parentECap - dynECap;
 
-      float parentStructTemp = State.RegionPhysicsBuffer.StructuralTemperatureK[parentRegIdx];
-      State.RegionPhysicsBuffer.StructuralTemperatureK[dynRegIdx] = parentStructTemp;
-      State.RegionPhysicsBuffer.PreviousStructuralTemperatureK[dynRegIdx] = parentStructTemp;
-      float parentCond = State.RegionPhysicsBuffer.StructuralThermalConductance[parentRegIdx];
-      float dynCond = parentCond * frac;
-      State.RegionPhysicsBuffer.StructuralThermalConductance[dynRegIdx] = dynCond;
-      State.RegionPhysicsBuffer.StructuralThermalConductance[parentRegIdx] = parentCond - dynCond;
+      float parentICap = State.RegionPhysicsBuffer.InternalMassThermalCapacity[parentRegIdx];
+      float dynICap = parentICap * frac;
+      State.RegionPhysicsBuffer.InternalMassThermalCapacity[dynRegIdx] = dynICap;
+      State.RegionPhysicsBuffer.InternalMassThermalCapacity[parentRegIdx] = parentICap - dynICap;
+
+      float parentETemp = State.RegionPhysicsBuffer.EnclosingTemperatureK[parentRegIdx];
+      State.RegionPhysicsBuffer.EnclosingTemperatureK[dynRegIdx] = parentETemp;
+      State.RegionPhysicsBuffer.PreviousEnclosingTemperatureK[dynRegIdx] = parentETemp;
+
+      float parentITemp = State.RegionPhysicsBuffer.InternalMassTemperatureK[parentRegIdx];
+      State.RegionPhysicsBuffer.InternalMassTemperatureK[dynRegIdx] = parentITemp;
+      State.RegionPhysicsBuffer.PreviousInternalMassTemperatureK[dynRegIdx] = parentITemp;
+
+      float parentECond = State.RegionPhysicsBuffer.EnclosingThermalConductance[parentRegIdx];
+      float dynECond = parentECond * frac;
+      State.RegionPhysicsBuffer.EnclosingThermalConductance[dynRegIdx] = dynECond;
+      State.RegionPhysicsBuffer.EnclosingThermalConductance[parentRegIdx] = parentECond - dynECond;
+
+      float parentICond = State.RegionPhysicsBuffer.InternalMassThermalConductance[parentRegIdx];
+      float dynICond = parentICond * frac;
+      State.RegionPhysicsBuffer.InternalMassThermalConductance[dynRegIdx] = dynICond;
+      State.RegionPhysicsBuffer.InternalMassThermalConductance[parentRegIdx] = parentICond - dynICond;
 
       // ── Activate dynamic slot ─────────────────────────────────────────
       State.RegionStates.IsActive[dynRegIdx] = true;
@@ -216,18 +231,33 @@ namespace SolarWeb.Pneuma.Simulation
       State.RegionPhysicsBuffer.RegionVolumes[dynRegIdx] = cellVol;
       State.RegionPhysicsBuffer.RegionVolumes[parentRegIdx] -= cellVol;
 
-      float parentStructCap = State.RegionPhysicsBuffer.StructuralThermalCapacity[parentRegIdx];
-      float dynStructCap = parentStructCap * frac;
-      State.RegionPhysicsBuffer.StructuralThermalCapacity[dynRegIdx] = dynStructCap;
-      State.RegionPhysicsBuffer.StructuralThermalCapacity[parentRegIdx] = parentStructCap - dynStructCap;
+      float parentECap = State.RegionPhysicsBuffer.EnclosingThermalCapacity[parentRegIdx];
+      float dynECap = parentECap * frac;
+      State.RegionPhysicsBuffer.EnclosingThermalCapacity[dynRegIdx] = dynECap;
+      State.RegionPhysicsBuffer.EnclosingThermalCapacity[parentRegIdx] = parentECap - dynECap;
 
-      float parentStructTemp = State.RegionPhysicsBuffer.StructuralTemperatureK[parentRegIdx];
-      State.RegionPhysicsBuffer.StructuralTemperatureK[dynRegIdx] = parentStructTemp;
-      State.RegionPhysicsBuffer.PreviousStructuralTemperatureK[dynRegIdx] = parentStructTemp;
-      float parentCond = State.RegionPhysicsBuffer.StructuralThermalConductance[parentRegIdx];
-      float dynCond = parentCond * frac;
-      State.RegionPhysicsBuffer.StructuralThermalConductance[dynRegIdx] = dynCond;
-      State.RegionPhysicsBuffer.StructuralThermalConductance[parentRegIdx] = parentCond - dynCond;
+      float parentICap = State.RegionPhysicsBuffer.InternalMassThermalCapacity[parentRegIdx];
+      float dynICap = parentICap * frac;
+      State.RegionPhysicsBuffer.InternalMassThermalCapacity[dynRegIdx] = dynICap;
+      State.RegionPhysicsBuffer.InternalMassThermalCapacity[parentRegIdx] = parentICap - dynICap;
+
+      float parentETemp = State.RegionPhysicsBuffer.EnclosingTemperatureK[parentRegIdx];
+      State.RegionPhysicsBuffer.EnclosingTemperatureK[dynRegIdx] = parentETemp;
+      State.RegionPhysicsBuffer.PreviousEnclosingTemperatureK[dynRegIdx] = parentETemp;
+
+      float parentITemp = State.RegionPhysicsBuffer.InternalMassTemperatureK[parentRegIdx];
+      State.RegionPhysicsBuffer.InternalMassTemperatureK[dynRegIdx] = parentITemp;
+      State.RegionPhysicsBuffer.PreviousInternalMassTemperatureK[dynRegIdx] = parentITemp;
+
+      float parentECond = State.RegionPhysicsBuffer.EnclosingThermalConductance[parentRegIdx];
+      float dynECond = parentECond * frac;
+      State.RegionPhysicsBuffer.EnclosingThermalConductance[dynRegIdx] = dynECond;
+      State.RegionPhysicsBuffer.EnclosingThermalConductance[parentRegIdx] = parentECond - dynECond;
+
+      float parentICond = State.RegionPhysicsBuffer.InternalMassThermalConductance[parentRegIdx];
+      float dynICond = parentICond * frac;
+      State.RegionPhysicsBuffer.InternalMassThermalConductance[dynRegIdx] = dynICond;
+      State.RegionPhysicsBuffer.InternalMassThermalConductance[parentRegIdx] = parentICond - dynICond;
 
       // ── Activate dynamic slot ─────────────────────────────────────────
       State.RegionStates.IsActive[dynRegIdx] = true;
@@ -386,28 +416,48 @@ namespace SolarWeb.Pneuma.Simulation
       float cellVol = State.WorldPhysicsBuffer.CellVolumes[worldIdx];
       State.RegionPhysicsBuffer.RegionVolumes[parentRegIdx] += cellVol;
 
-      float dynStructCap = State.RegionPhysicsBuffer.StructuralThermalCapacity[dynRegIdx];
-      float parentStructCap = State.RegionPhysicsBuffer.StructuralThermalCapacity[parentRegIdx];
-      float totalStructCap = dynStructCap + parentStructCap;
-      if (totalStructCap > 1e-6f)
+      float dynECap = State.RegionPhysicsBuffer.EnclosingThermalCapacity[dynRegIdx];
+      float parentECap = State.RegionPhysicsBuffer.EnclosingThermalCapacity[parentRegIdx];
+      float totalECap = dynECap + parentECap;
+      if (totalECap > 1e-6f)
       {
-        float tDynStruct = State.RegionPhysicsBuffer.StructuralTemperatureK[dynRegIdx];
-        float tParentStruct = State.RegionPhysicsBuffer.StructuralTemperatureK[parentRegIdx];
-        float blended = (dynStructCap * tDynStruct + parentStructCap * tParentStruct) / totalStructCap;
-        State.RegionPhysicsBuffer.StructuralTemperatureK[parentRegIdx] = blended;
-        State.RegionPhysicsBuffer.PreviousStructuralTemperatureK[parentRegIdx] = blended;
+        float tDynE = State.RegionPhysicsBuffer.EnclosingTemperatureK[dynRegIdx];
+        float tParentE = State.RegionPhysicsBuffer.EnclosingTemperatureK[parentRegIdx];
+        float blended = (dynECap * tDynE + parentECap * tParentE) / totalECap;
+        State.RegionPhysicsBuffer.EnclosingTemperatureK[parentRegIdx] = blended;
+        State.RegionPhysicsBuffer.PreviousEnclosingTemperatureK[parentRegIdx] = blended;
       }
-      State.RegionPhysicsBuffer.StructuralThermalConductance[parentRegIdx] +=
-        State.RegionPhysicsBuffer.StructuralThermalConductance[dynRegIdx];
 
-      State.RegionPhysicsBuffer.StructuralThermalCapacity[parentRegIdx] += dynStructCap;
+      float dynICap = State.RegionPhysicsBuffer.InternalMassThermalCapacity[dynRegIdx];
+      float parentICap = State.RegionPhysicsBuffer.InternalMassThermalCapacity[parentRegIdx];
+      float totalICap = dynICap + parentICap;
+      if (totalICap > 1e-6f)
+      {
+        float tDynI = State.RegionPhysicsBuffer.InternalMassTemperatureK[dynRegIdx];
+        float tParentI = State.RegionPhysicsBuffer.InternalMassTemperatureK[parentRegIdx];
+        float blended = (dynICap * tDynI + parentICap * tParentI) / totalICap;
+        State.RegionPhysicsBuffer.InternalMassTemperatureK[parentRegIdx] = blended;
+        State.RegionPhysicsBuffer.PreviousInternalMassTemperatureK[parentRegIdx] = blended;
+      }
+
+      State.RegionPhysicsBuffer.EnclosingThermalConductance[parentRegIdx] +=
+        State.RegionPhysicsBuffer.EnclosingThermalConductance[dynRegIdx];
+      State.RegionPhysicsBuffer.InternalMassThermalConductance[parentRegIdx] +=
+        State.RegionPhysicsBuffer.InternalMassThermalConductance[dynRegIdx];
+
+      State.RegionPhysicsBuffer.EnclosingThermalCapacity[parentRegIdx] += dynECap;
+      State.RegionPhysicsBuffer.InternalMassThermalCapacity[parentRegIdx] += dynICap;
 
       // Reset dynamic slot physics
       State.RegionPhysicsBuffer.RegionVolumes[dynRegIdx] = 0f;
-      State.RegionPhysicsBuffer.StructuralThermalCapacity[dynRegIdx] = 0f;
-      State.RegionPhysicsBuffer.StructuralTemperatureK[dynRegIdx] = 0f;
-      State.RegionPhysicsBuffer.PreviousStructuralTemperatureK[dynRegIdx] = 0f;
-      State.RegionPhysicsBuffer.StructuralThermalConductance[dynRegIdx] = 0f;
+      State.RegionPhysicsBuffer.EnclosingThermalCapacity[dynRegIdx] = 0f;
+      State.RegionPhysicsBuffer.InternalMassThermalCapacity[dynRegIdx] = 0f;
+      State.RegionPhysicsBuffer.EnclosingTemperatureK[dynRegIdx] = 0f;
+      State.RegionPhysicsBuffer.InternalMassTemperatureK[dynRegIdx] = 0f;
+      State.RegionPhysicsBuffer.PreviousEnclosingTemperatureK[dynRegIdx] = 0f;
+      State.RegionPhysicsBuffer.PreviousInternalMassTemperatureK[dynRegIdx] = 0f;
+      State.RegionPhysicsBuffer.EnclosingThermalConductance[dynRegIdx] = 0f;
+      State.RegionPhysicsBuffer.InternalMassThermalConductance[dynRegIdx] = 0f;
       State.RegionPhysicsBuffer.TemperatureK[dynRegIdx] = 0f;
 
       // ── Tombstone dynamic faces (zero-flux sentinel-sentinel) ─────────

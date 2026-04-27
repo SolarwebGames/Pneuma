@@ -7,7 +7,8 @@ namespace SolarWeb.Pneuma.Data
 		public int SimIndex;
 		public int RoomID;
 		public float TemperatureK;
-		public float StructuralTemperatureK;
+		public float EnclosingTemperatureK;
+		public float InternalMassTemperatureK;
 		public float MaxPressureKpa;
 		public List<int> RegionCells;
 	}

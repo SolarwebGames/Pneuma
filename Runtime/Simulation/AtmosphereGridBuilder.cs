@@ -126,7 +126,13 @@ namespace SolarWeb.Pneuma.Simulation
       {
         var regionData = config.RegionData[i];
         newGrid.RegionPhysicsBuffer.TemperatureK[i] = regionData.TemperatureK;
-        newGrid.RegionPhysicsBuffer.StructuralTemperatureK[i] = regionData.StructuralTemperatureK;
+
+        float et = (regionData.EnclosingTemperatureK > 1f) ? regionData.EnclosingTemperatureK : regionData.TemperatureK;
+        newGrid.RegionPhysicsBuffer.EnclosingTemperatureK[i] = et;
+
+        float it = (regionData.InternalMassTemperatureK > 1f) ? regionData.InternalMassTemperatureK : regionData.TemperatureK;
+        newGrid.RegionPhysicsBuffer.InternalMassTemperatureK[i] = it;
+
         newGrid.RegionPhysicsBuffer.MaxPressureKpa[i] = regionData.MaxPressureKpa;
         newGrid.RegionPhysicsBuffer.PreviousTemperatureK[i] = regionData.TemperatureK;
         newGrid.RegionStates.RegionToRoomID[i] = regionData.RoomID;
@@ -192,6 +198,19 @@ namespace SolarWeb.Pneuma.Simulation
         }
       }
 
+      bool[] isEnclosingCell = new bool[config.CellCount];
+      for (int f = 0; f < config.CellFaces.Count; f++)
+      {
+        var face = config.CellFaces[f];
+        int regA = newGrid.GridLookups.WorldToRegionIndex[config.CellData[face.CellA].WorldIndex];
+        int regB = newGrid.GridLookups.WorldToRegionIndex[config.CellData[face.CellB].WorldIndex];
+        if (regA != regB)
+        {
+          isEnclosingCell[face.CellA] = true;
+          isEnclosingCell[face.CellB] = true;
+        }
+      }
+
       for (int i = 0; i < config.CellCount; i++)
       {
         var cell = config.CellData[i];
@@ -204,20 +223,41 @@ namespace SolarWeb.Pneuma.Simulation
         int regIdx = newGrid.GridLookups.WorldToRegionIndex[cell.WorldIndex];
         if (regIdx >= 0 && regIdx < newGrid.SimRegionCount)
         {
-          newGrid.RegionPhysicsBuffer.StructuralThermalCapacity[regIdx] += cell.CellProperties.ThermalCapacity;
-          newGrid.RegionPhysicsBuffer.StructuralThermalConductance[regIdx] += cell.CellProperties.ThermalConductivity * 2.5f;
+          // A cell is also enclosing if it has exposed top/bottom boundaries
+          if (cell.Top.ThermalConductivity > 0 || cell.Top.FaceGasPermeability > 0 ||
+              cell.Bottom.ThermalConductivity > 0 || cell.Bottom.FaceGasPermeability > 0)
+          {
+            isEnclosingCell[i] = true;
+          }
+
+          if (isEnclosingCell[i])
+          {
+            newGrid.RegionPhysicsBuffer.EnclosingThermalCapacity[regIdx] += cell.CellProperties.ThermalCapacity;
+            newGrid.RegionPhysicsBuffer.EnclosingThermalConductance[regIdx] += cell.CellProperties.ThermalConductivity * 2.5f;
+          }
+          else
+          {
+            newGrid.RegionPhysicsBuffer.InternalMassThermalCapacity[regIdx] += cell.CellProperties.ThermalCapacity;
+            newGrid.RegionPhysicsBuffer.InternalMassThermalConductance[regIdx] += cell.CellProperties.ThermalConductivity * 2.5f;
+          }
         }
       }
 
       for (int i = 0; i < config.RegionCount; i++)
       {
-        newGrid.RegionPhysicsBuffer.StructuralTemperatureK[i] = newGrid.RegionPhysicsBuffer.TemperatureK[i];
-        newGrid.RegionPhysicsBuffer.PreviousStructuralTemperatureK[i] = newGrid.RegionPhysicsBuffer.TemperatureK[i];
+        float initialTemp = newGrid.RegionPhysicsBuffer.TemperatureK[i];
+        newGrid.RegionPhysicsBuffer.EnclosingTemperatureK[i] = initialTemp;
+        newGrid.RegionPhysicsBuffer.PreviousEnclosingTemperatureK[i] = initialTemp;
+        newGrid.RegionPhysicsBuffer.InternalMassTemperatureK[i] = initialTemp;
+        newGrid.RegionPhysicsBuffer.PreviousInternalMassTemperatureK[i] = initialTemp;
       }
 
       // Ensure sentinel and dynamic pool are also initialized to ambient
-      newGrid.RegionPhysicsBuffer.StructuralTemperatureK[newGrid.SentinelRegionIndex] = newGrid.AmbientEnvironment.TemperatureK;
-      newGrid.RegionPhysicsBuffer.PreviousStructuralTemperatureK[newGrid.SentinelRegionIndex] = newGrid.AmbientEnvironment.TemperatureK;
+      float ambientTemp = newGrid.AmbientEnvironment.TemperatureK;
+      newGrid.RegionPhysicsBuffer.EnclosingTemperatureK[newGrid.SentinelRegionIndex] = ambientTemp;
+      newGrid.RegionPhysicsBuffer.PreviousEnclosingTemperatureK[newGrid.SentinelRegionIndex] = ambientTemp;
+      newGrid.RegionPhysicsBuffer.InternalMassTemperatureK[newGrid.SentinelRegionIndex] = ambientTemp;
+      newGrid.RegionPhysicsBuffer.PreviousInternalMassTemperatureK[newGrid.SentinelRegionIndex] = ambientTemp;
 
       // Recompute all region faces now that the grid is built, ensuring consistency
       // between initialization and dynamic updates.
@@ -376,9 +416,16 @@ namespace SolarWeb.Pneuma.Simulation
               newGrid.RegionStates.IsBurning[i] = saved.IsBurning;
               newGrid.RegionStates.BurnIntensity[i] = saved.BurnIntensity;
               newGrid.RegionPhysicsBuffer.TemperatureK[i] = saved.TemperatureK;
-              float st = (saved.StructuralTemperatureK > 1f) ? saved.StructuralTemperatureK : saved.TemperatureK;
-              newGrid.RegionPhysicsBuffer.StructuralTemperatureK[i] = st;
-              newGrid.RegionPhysicsBuffer.PreviousStructuralTemperatureK[i] = st; for (int g = 0; g < System.Math.Min(newGrid.GasCount, saved.GasUMoles.Length); g++)
+
+              float et = (saved.EnclosingTemperatureK > 1f) ? saved.EnclosingTemperatureK : saved.TemperatureK;
+              newGrid.RegionPhysicsBuffer.EnclosingTemperatureK[i] = et;
+              newGrid.RegionPhysicsBuffer.PreviousEnclosingTemperatureK[i] = et;
+
+              float it = (saved.InternalMassTemperatureK > 1f) ? saved.InternalMassTemperatureK : saved.TemperatureK;
+              newGrid.RegionPhysicsBuffer.InternalMassTemperatureK[i] = it;
+              newGrid.RegionPhysicsBuffer.PreviousInternalMassTemperatureK[i] = it;
+
+              for (int g = 0; g < System.Math.Min(newGrid.GasCount, saved.GasUMoles.Length); g++)
               {
                 int regIdx = newGrid.GetRegionUMoleIndex(g, i);
                 newGrid.RegionGasComposition.uMoles[regIdx] = saved.GasUMoles[g];
@@ -453,8 +500,10 @@ namespace SolarWeb.Pneuma.Simulation
       // Initialize structural properties to zero for aggregation
       for (int i = 0; i < grid.RegionStride; i++)
       {
-        grid.RegionPhysicsBuffer.StructuralThermalCapacity[i] = 0f;
-        grid.RegionPhysicsBuffer.StructuralThermalConductance[i] = 0f;
+        grid.RegionPhysicsBuffer.EnclosingThermalCapacity[i] = 0f;
+        grid.RegionPhysicsBuffer.EnclosingThermalConductance[i] = 0f;
+        grid.RegionPhysicsBuffer.InternalMassThermalCapacity[i] = 0f;
+        grid.RegionPhysicsBuffer.InternalMassThermalConductance[i] = 0f;
       }
     }
 
@@ -491,7 +540,8 @@ namespace SolarWeb.Pneuma.Simulation
     {
       int newRegionCount = newGrid.SimRegionCount;
       float[] weightedTemp = new float[newGrid.RegionStride];
-      float[] weightedStructTemp = new float[newGrid.RegionStride];
+      float[] weightedEnclosingTemp = new float[newGrid.RegionStride];
+      float[] weightedInternalMassTemp = new float[newGrid.RegionStride];
       float[] totalVol = new float[newGrid.RegionStride];
       float[] maxBurnIntensity = new float[newGrid.RegionStride];
 
@@ -524,7 +574,8 @@ namespace SolarWeb.Pneuma.Simulation
         // Temperature: volume-weighted accumulation across contributing old regions
         float cellVol = newGrid.WorldPhysicsBuffer.CellVolumes[wIdx];
         weightedTemp[newR] += snap.TemperatureK[oldR] * cellVol;
-        weightedStructTemp[newR] += snap.StructuralTemperatureK[oldR] * cellVol;
+        weightedEnclosingTemp[newR] += snap.EnclosingTemperatureK[oldR] * cellVol;
+        weightedInternalMassTemp[newR] += snap.InternalMassTemperatureK[oldR] * cellVol;
         totalVol[newR] += cellVol;
 
         // Burn state: track the maximum intensity seen from any contributing old region
@@ -541,11 +592,15 @@ namespace SolarWeb.Pneuma.Simulation
         if (totalVol[r] <= 0f) continue;
 
         float t = weightedTemp[r] / totalVol[r];
-        float st = weightedStructTemp[r] / totalVol[r];
+        float et = weightedEnclosingTemp[r] / totalVol[r];
+        float it = weightedInternalMassTemp[r] / totalVol[r];
+
         newGrid.RegionPhysicsBuffer.TemperatureK[r] = t;
         newGrid.RegionPhysicsBuffer.PreviousTemperatureK[r] = t;
-        newGrid.RegionPhysicsBuffer.StructuralTemperatureK[r] = st;
-        newGrid.RegionPhysicsBuffer.PreviousStructuralTemperatureK[r] = st;
+        newGrid.RegionPhysicsBuffer.EnclosingTemperatureK[r] = et;
+        newGrid.RegionPhysicsBuffer.PreviousEnclosingTemperatureK[r] = et;
+        newGrid.RegionPhysicsBuffer.InternalMassTemperatureK[r] = it;
+        newGrid.RegionPhysicsBuffer.PreviousInternalMassTemperatureK[r] = it;
         newGrid.RegionPhysicsBuffer.RoomCurrentTemperatureK[r] = t;
         if (newGrid.RegionStates.IsBurning[r])
           newGrid.RegionStates.BurnIntensity[r] = maxBurnIntensity[r];

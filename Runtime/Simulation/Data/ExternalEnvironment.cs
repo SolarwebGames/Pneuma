@@ -123,9 +123,11 @@ namespace SolarWeb.Pneuma.Data
 			float averageMolarMass = initialMassCapacity / (environment.TotalUMolesInOneCell / 1000000f);
 
 			grid.RegionPhysicsBuffer.TemperatureK[grid.SentinelRegionIndex]    = environment.TemperatureK;
-			grid.RegionPhysicsBuffer.StructuralTemperatureK[grid.SentinelRegionIndex] = environment.TemperatureK;
+			grid.RegionPhysicsBuffer.EnclosingTemperatureK[grid.SentinelRegionIndex] = environment.TemperatureK;
+			grid.RegionPhysicsBuffer.InternalMassTemperatureK[grid.SentinelRegionIndex] = environment.TemperatureK;
 			grid.RegionPhysicsBuffer.PreviousTemperatureK[grid.SentinelRegionIndex] = environment.TemperatureK;
-			grid.RegionPhysicsBuffer.PreviousStructuralTemperatureK[grid.SentinelRegionIndex] = environment.TemperatureK;
+			grid.RegionPhysicsBuffer.PreviousEnclosingTemperatureK[grid.SentinelRegionIndex] = environment.TemperatureK;
+			grid.RegionPhysicsBuffer.PreviousInternalMassTemperatureK[grid.SentinelRegionIndex] = environment.TemperatureK;
 			grid.RegionPhysicsBuffer.RegionVolumes[grid.SentinelRegionIndex]   = CellVolume;
 			grid.RegionGasComposition.PressureKpa[grid.SentinelRegionIndex]    = environment.TotalPressureKpa;
 			grid.RegionGasComposition.TotalUMoles[grid.SentinelRegionIndex]    = environment.TotalUMolesInOneCell;

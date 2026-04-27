@@ -6,18 +6,18 @@ using Unity.Mathematics;
 namespace SolarWeb.Pneuma.Jobs.Thermal
 {
   [BurstCompile(OptimizeFor = OptimizeFor.Performance)]
-  public struct ComputeStructuralFaceThermalFlux : IJobParallelFor
+  public struct ComputeEnclosingFaceThermalFlux : IJobParallelFor
   {
     [ReadOnly] public NativeArray<float> TemperatureK;
-    [ReadOnly] public NativeArray<float> StructuralTemperatureK;
-    [ReadOnly] public NativeArray<float> StructuralThermalCapacity;
+    [ReadOnly] public NativeArray<float> EnclosingTemperatureK;
+    [ReadOnly] public NativeArray<float> EnclosingThermalCapacity;
     [ReadOnly] public NativeArray<int> FaceRegionA, FaceRegionB;
     [ReadOnly] public NativeArray<float> FaceThermalConductivity;
 
     public float TimeStep;
     public int SentinelRegionIndex;
 
-    [WriteOnly] public NativeArray<float> StructuralFaceThermalFlux;
+    [WriteOnly] public NativeArray<float> EnclosingFaceThermalFlux;
 
     public void Execute(int fIdx)
     {
@@ -26,12 +26,12 @@ namespace SolarWeb.Pneuma.Jobs.Thermal
 
       if (iA < 0 || iB < 0 || (iA == SentinelRegionIndex && iB == SentinelRegionIndex))
       {
-        StructuralFaceThermalFlux[fIdx] = 0f;
+        EnclosingFaceThermalFlux[fIdx] = 0f;
         return;
       }
 
-      float tA = StructuralTemperatureK[iA];
-      float tB = StructuralTemperatureK[iB];
+      float tA = EnclosingTemperatureK[iA];
+      float tB = EnclosingTemperatureK[iB];
 
       // Fallback to gas temperature for sentinel if its structural temperature wasn't initialized
       if (iA == SentinelRegionIndex && tA <= 0f) tA = TemperatureK[iA];
@@ -40,13 +40,13 @@ namespace SolarWeb.Pneuma.Jobs.Thermal
       float capA = 0f;
       float capB = 0f;
 
-      if (iA < StructuralThermalCapacity.Length) capA = (iA == SentinelRegionIndex) ? float.MaxValue : StructuralThermalCapacity[iA];
-      if (iB < StructuralThermalCapacity.Length) capB = (iB == SentinelRegionIndex) ? float.MaxValue : StructuralThermalCapacity[iB];
+      if (iA < EnclosingThermalCapacity.Length) capA = (iA == SentinelRegionIndex) ? float.MaxValue : EnclosingThermalCapacity[iA];
+      if (iB < EnclosingThermalCapacity.Length) capB = (iB == SentinelRegionIndex) ? float.MaxValue : EnclosingThermalCapacity[iB];
 
       // Prevent infinite exchange if either has near-zero capacity
       if (capA <= 1e-6f || capB <= 1e-6f)
       {
-        StructuralFaceThermalFlux[fIdx] = 0f;
+        EnclosingFaceThermalFlux[fIdx] = 0f;
         return;
       }
 
@@ -56,7 +56,7 @@ namespace SolarWeb.Pneuma.Jobs.Thermal
 
       if (conductivity <= 0f)
       {
-        StructuralFaceThermalFlux[fIdx] = 0f;
+        EnclosingFaceThermalFlux[fIdx] = 0f;
         return;
       }
 
@@ -74,7 +74,7 @@ namespace SolarWeb.Pneuma.Jobs.Thermal
         flux = maxFlux;
       }
 
-      StructuralFaceThermalFlux[fIdx] = flux;
+      EnclosingFaceThermalFlux[fIdx] = flux;
     }
   }
 }

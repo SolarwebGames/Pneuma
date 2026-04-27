@@ -25,7 +25,8 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
     [ReadOnly] public NativeArray<float> GasMolarMassesScaled;      // MolarMass * 1e-6f
     [ReadOnly] public NativeArray<float> RegionVolumes;
     [ReadOnly] public NativeArray<float> TemperatureK;
-    [ReadOnly] public NativeArray<float> StructuralTemperatureK;
+    [ReadOnly] public NativeArray<float> EnclosingTemperatureK;
+    [ReadOnly] public NativeArray<float> InternalMassTemperatureK;
     [ReadOnly] public NativeArray<float> MolarHeatCapacityAtConstantPressure;
     [ReadOnly] public NativeArray<float> MolarHeatCapacityAtConstantVolume;
     [ReadOnly] public NativeArray<bool> IsBurning;
@@ -36,7 +37,8 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
     public NativeArray<float> PressureKpa;
     public NativeArray<float> PreviousPressureKpa;
     [NativeDisableParallelForRestriction] public NativeArray<float> PreviousTemperatureK;
-    [NativeDisableParallelForRestriction] public NativeArray<float> PreviousStructuralTemperatureK;
+    [NativeDisableParallelForRestriction] public NativeArray<float> PreviousEnclosingTemperatureK;
+    [NativeDisableParallelForRestriction] public NativeArray<float> PreviousInternalMassTemperatureK;
     public NativeArray<int> ActiveTicks;
     public NativeArray<bool> RegionIsActive;
 
@@ -111,7 +113,8 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
         float totalMass = tMass[j];
         float volume = RegionVolumes[simIdx];
         float tempK = TemperatureK[simIdx];
-        float structTempK = StructuralTemperatureK[simIdx];
+        float enclosingTempK = EnclosingTemperatureK[simIdx];
+        float internalMassTempK = InternalMassTemperatureK[simIdx];
 
         float pressureKpa = 0f;
         if (volume >= 0.001f)
@@ -119,14 +122,17 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
 
         float deltaP = math.abs(pressureKpa - PreviousPressureKpa[simIdx]);
         float deltaT = math.abs(tempK - PreviousTemperatureK[simIdx]);
-        float deltaST = math.abs(structTempK - PreviousStructuralTemperatureK[simIdx]);
+        float deltaET = math.abs(enclosingTempK - PreviousEnclosingTemperatureK[simIdx]);
+        float deltaIT = math.abs(internalMassTempK - PreviousInternalMassTemperatureK[simIdx]);
 
         PreviousTemperatureK[simIdx] = tempK;
-        PreviousStructuralTemperatureK[simIdx] = structTempK;
+        PreviousEnclosingTemperatureK[simIdx] = enclosingTempK;
+        PreviousInternalMassTemperatureK[simIdx] = internalMassTempK;
 
         bool isDirty = deltaP > PressureDirtyThreshold
                     || deltaT > TemperatureDirtyThreshold
-                    || deltaST > TemperatureDirtyThreshold
+                    || deltaET > TemperatureDirtyThreshold
+                    || deltaIT > TemperatureDirtyThreshold
                     || IsBurning[simIdx] || simIdx == SentinelIndex;
         int priorActiveTicks = ActiveTicks[simIdx];
 

@@ -11,7 +11,8 @@ namespace SolarWeb.Pneuma.Data
 		public long[] SolidUMoles;
 		public long[] LiquidUMoles;
 		public float TemperatureK;
-		public float StructuralTemperatureK;
+		public float EnclosingTemperatureK;
+		public float InternalMassTemperatureK;
 		public bool IsBurning;
 		public float BurnIntensity;
 	}

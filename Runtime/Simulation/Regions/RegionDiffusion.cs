@@ -203,59 +203,65 @@ namespace SolarWeb.Pneuma.Simulation
 
     public JobHandle DoStructuralThermalPasses(float timeStep, JobHandle dependency = default)
     {
-      // 1. Compute face-to-face solid conduction
-      var computeFaceJob = new ComputeStructuralFaceThermalFlux
+      // 1. Compute face-to-face solid conduction (Enclosing structure only)
+      var computeFaceJob = new ComputeEnclosingFaceThermalFlux
       {
         TemperatureK = State.RegionPhysicsBuffer.TemperatureK,
-        StructuralTemperatureK = State.RegionPhysicsBuffer.StructuralTemperatureK,
-        StructuralThermalCapacity = State.RegionPhysicsBuffer.StructuralThermalCapacity,
+        EnclosingTemperatureK = State.RegionPhysicsBuffer.EnclosingTemperatureK,
+        EnclosingThermalCapacity = State.RegionPhysicsBuffer.EnclosingThermalCapacity,
         FaceRegionA = State.RegionFaceBuffer.FaceRegionA,
         FaceRegionB = State.RegionFaceBuffer.FaceRegionB,
         FaceThermalConductivity = State.RegionFaceBuffer.FaceThermalConductivity,
         TimeStep = timeStep,
         SentinelRegionIndex = State.SentinelRegionIndex,
-        StructuralFaceThermalFlux = State.RegionFaceBuffer.StructuralFaceThermalFlux
+        EnclosingFaceThermalFlux = State.RegionFaceBuffer.EnclosingFaceThermalFlux
       };
       var faceHandle = computeFaceJob.Schedule(State.RegionFaceBuffer.TotalFaceCount, 64, dependency);
 
-      // 2. Apply face-to-face solid conduction
-      var applyFaceJob = new ApplyStructuralFaceThermalFlux
+      // 2. Apply face-to-face solid conduction (Enclosing structure only)
+      var applyFaceJob = new ApplyEnclosingFaceThermalFlux
       {
         RegionFaceOffsets = State.RegionFaceBuffer.RegionFaceOffsets,
         RegionFaceCounts = State.RegionFaceBuffer.RegionFaceCounts,
         RegionFaceIndices = State.RegionFaceBuffer.RegionFaceIndices,
         FaceRegionA = State.RegionFaceBuffer.FaceRegionA,
-        StructuralFaceThermalFlux = State.RegionFaceBuffer.StructuralFaceThermalFlux,
-        StructuralThermalCapacity = State.RegionPhysicsBuffer.StructuralThermalCapacity,
-        StructuralTemperatureK = State.RegionPhysicsBuffer.StructuralTemperatureK,
+        EnclosingFaceThermalFlux = State.RegionFaceBuffer.EnclosingFaceThermalFlux,
+        EnclosingThermalCapacity = State.RegionPhysicsBuffer.EnclosingThermalCapacity,
+        EnclosingTemperatureK = State.RegionPhysicsBuffer.EnclosingTemperatureK,
         ActiveRegionIndices = State.RegionStates.ActiveIndices.AsDeferredJobArray(),
         SentinelIndex = State.SentinelRegionIndex
       };
       var applyFaceHandle = applyFaceJob.Schedule(State.RegionStates.ActiveIndices, 32, faceHandle);
 
-      // 3. Compute gas-to-structure exchange
-      var computeExchJob = new ComputeStructuralGasThermalExchange
+      // 3. Compute gas-to-structure exchange (Both Enclosing and InternalMass)
+      var computeExchJob = new ComputeStructureAndMassGasThermalExchange
       {
-        StructuralTemperatureK = State.RegionPhysicsBuffer.StructuralTemperatureK,
+        EnclosingTemperatureK = State.RegionPhysicsBuffer.EnclosingTemperatureK,
+        InternalMassTemperatureK = State.RegionPhysicsBuffer.InternalMassTemperatureK,
         TemperatureK = State.RegionPhysicsBuffer.TemperatureK,
-        StructuralThermalConductance = State.RegionPhysicsBuffer.StructuralThermalConductance,
+        EnclosingThermalConductance = State.RegionPhysicsBuffer.EnclosingThermalConductance,
+        InternalMassThermalConductance = State.RegionPhysicsBuffer.InternalMassThermalConductance,
         TimeStep = timeStep,
         ActiveRegionIndices = State.RegionStates.ActiveIndices.AsDeferredJobArray(),
         SentinelIndex = State.SentinelRegionIndex,
-        StructuralGasHeatFlux = State.RegionPhysicsBuffer.StructuralGasHeatFlux
+        EnclosingGasHeatFlux = State.RegionPhysicsBuffer.EnclosingGasHeatFlux,
+        InternalMassGasHeatFlux = State.RegionPhysicsBuffer.InternalMassGasHeatFlux
       };
       var exchHandle = computeExchJob.Schedule(State.RegionStates.ActiveIndices, 32, applyFaceHandle);
 
-      // 4. Apply gas-to-structure exchange
-      var applyExchJob = new ApplyStructuralGasThermalExchange
+      // 4. Apply gas-to-structure exchange (Both Enclosing and InternalMass)
+      var applyExchJob = new ApplyStructureAndMassGasThermalExchange
       {
-        StructuralGasHeatFlux = State.RegionPhysicsBuffer.StructuralGasHeatFlux,
+        EnclosingGasHeatFlux = State.RegionPhysicsBuffer.EnclosingGasHeatFlux,
+        InternalMassGasHeatFlux = State.RegionPhysicsBuffer.InternalMassGasHeatFlux,
         MixtureMolarCp = State.RegionPhysicsBuffer.MixtureMolarCp,
         TotalUMoles = State.RegionGasComposition.TotalUMoles,
-        StructuralThermalCapacity = State.RegionPhysicsBuffer.StructuralThermalCapacity,
+        EnclosingThermalCapacity = State.RegionPhysicsBuffer.EnclosingThermalCapacity,
+        InternalMassThermalCapacity = State.RegionPhysicsBuffer.InternalMassThermalCapacity,
         RegionVolumes = State.RegionPhysicsBuffer.RegionVolumes,
         TemperatureK = State.RegionPhysicsBuffer.TemperatureK,
-        StructuralTemperatureK = State.RegionPhysicsBuffer.StructuralTemperatureK,
+        EnclosingTemperatureK = State.RegionPhysicsBuffer.EnclosingTemperatureK,
+        InternalMassTemperatureK = State.RegionPhysicsBuffer.InternalMassTemperatureK,
         ActiveRegionIndices = State.RegionStates.ActiveIndices.AsDeferredJobArray(),
         SentinelIndex = State.SentinelRegionIndex
       };

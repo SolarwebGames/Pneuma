@@ -12,7 +12,8 @@ namespace SolarWeb.Pneuma.Data
   {
     public int[] WorldToRegionIndex = System.Array.Empty<int>();
     public float[] TemperatureK = System.Array.Empty<float>();
-    public float[] StructuralTemperatureK = System.Array.Empty<float>();
+    public float[] EnclosingTemperatureK = System.Array.Empty<float>();
+    public float[] InternalMassTemperatureK = System.Array.Empty<float>();
     public long[] FlatUMoles = System.Array.Empty<long>();
     public long[] FlatSolidUMoles = System.Array.Empty<long>();
     public long[] FlatLiquidUMoles = System.Array.Empty<long>();
@@ -44,7 +45,8 @@ namespace SolarWeb.Pneuma.Data
       {
         WorldToRegionIndex = wtr.ToArray(),
         TemperatureK = grid.RegionPhysicsBuffer.TemperatureK.ToArray(),
-        StructuralTemperatureK = grid.RegionPhysicsBuffer.StructuralTemperatureK.ToArray(),
+        EnclosingTemperatureK = grid.RegionPhysicsBuffer.EnclosingTemperatureK.ToArray(),
+        InternalMassTemperatureK = grid.RegionPhysicsBuffer.InternalMassTemperatureK.ToArray(),
         FlatUMoles = grid.RegionGasComposition.uMoles.ToArray(),
         FlatSolidUMoles = grid.SolidComposition.uMoles.ToArray(),
         FlatLiquidUMoles = grid.LiquidComposition.uMoles.ToArray(),

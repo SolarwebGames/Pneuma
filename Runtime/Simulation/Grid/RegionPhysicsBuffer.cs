@@ -14,12 +14,18 @@ public class RegionPhysicsBuffer : IDisposable
   public NativeArray<float> InvVolConst;
   public NativeArray<float> TFactor;
   public NativeArray<float> MixtureMolarCp;
-  public NativeArray<float> StructuralThermalCapacity;
-  public NativeArray<float> StructuralTemperatureK;
-  public NativeArray<float> PreviousStructuralTemperatureK;
-  public NativeArray<float> StructuralTemperatureResidueK;
-  public NativeArray<float> StructuralThermalConductance; // W/K, gas↔structure interface
-  public NativeArray<float> StructuralGasHeatFlux;        // transient, J per tick
+  public NativeArray<float> EnclosingThermalCapacity;
+  public NativeArray<float> EnclosingTemperatureK;
+  public NativeArray<float> PreviousEnclosingTemperatureK;
+  public NativeArray<float> EnclosingThermalConductance; // W/K, gas↔structure interface
+  public NativeArray<float> EnclosingGasHeatFlux;        // transient, J per tick
+
+  public NativeArray<float> InternalMassThermalCapacity;
+  public NativeArray<float> InternalMassTemperatureK;
+  public NativeArray<float> PreviousInternalMassTemperatureK;
+  public NativeArray<float> InternalMassThermalConductance; // W/K, gas↔mass interface
+  public NativeArray<float> InternalMassGasHeatFlux;        // transient, J per tick
+
   public NativeArray<float> MaxPressureKpa;
 
   public NativeArray<bool> IsHighGradient;
@@ -37,12 +43,19 @@ public class RegionPhysicsBuffer : IDisposable
     InvVolConst.Resize(stride);
     TFactor.Resize(stride);
     MixtureMolarCp.Resize(stride);
-    StructuralThermalCapacity.Resize(stride);
-    StructuralTemperatureK.Resize(stride);
-    PreviousStructuralTemperatureK.Resize(stride);
-    StructuralTemperatureResidueK.Resize(stride);
-    StructuralThermalConductance.Resize(stride);
-    StructuralGasHeatFlux.Resize(stride);
+
+    EnclosingThermalCapacity.Resize(stride);
+    EnclosingTemperatureK.Resize(stride);
+    PreviousEnclosingTemperatureK.Resize(stride);
+    EnclosingThermalConductance.Resize(stride);
+    EnclosingGasHeatFlux.Resize(stride);
+
+    InternalMassThermalCapacity.Resize(stride);
+    InternalMassTemperatureK.Resize(stride);
+    PreviousInternalMassTemperatureK.Resize(stride);
+    InternalMassThermalConductance.Resize(stride);
+    InternalMassGasHeatFlux.Resize(stride);
+
     MaxPressureKpa.Resize(stride);
   }
 
@@ -59,12 +72,19 @@ public class RegionPhysicsBuffer : IDisposable
     InvVolConst.SafeDispose();
     TFactor.SafeDispose();
     MixtureMolarCp.SafeDispose();
-    StructuralThermalCapacity.SafeDispose();
-    StructuralTemperatureK.SafeDispose();
-    PreviousStructuralTemperatureK.SafeDispose();
-    StructuralTemperatureResidueK.SafeDispose();
-    StructuralThermalConductance.SafeDispose();
-    StructuralGasHeatFlux.SafeDispose();
+
+    EnclosingThermalCapacity.SafeDispose();
+    EnclosingTemperatureK.SafeDispose();
+    PreviousEnclosingTemperatureK.SafeDispose();
+    EnclosingThermalConductance.SafeDispose();
+    EnclosingGasHeatFlux.SafeDispose();
+
+    InternalMassThermalCapacity.SafeDispose();
+    InternalMassTemperatureK.SafeDispose();
+    PreviousInternalMassTemperatureK.SafeDispose();
+    InternalMassThermalConductance.SafeDispose();
+    InternalMassGasHeatFlux.SafeDispose();
+
     MaxPressureKpa.SafeDispose();
   }
 }
