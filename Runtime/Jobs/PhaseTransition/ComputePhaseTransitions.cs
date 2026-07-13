@@ -4,7 +4,6 @@ using Unity.Jobs;
 using Unity.Mathematics;
 
 using SolarWeb.Pneuma.MathA;
-using SolarWeb.Pneuma.Logging;
 
 namespace SolarWeb.Pneuma.Jobs.PhaseTransition
 {

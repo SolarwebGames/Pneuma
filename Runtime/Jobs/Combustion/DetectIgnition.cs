@@ -24,7 +24,7 @@ namespace SolarWeb.Pneuma.Jobs.Combustion
     public float MinOxidizingPotency;
     public float MinCombustionPressureKpa;
 
-    [WriteOnly] public NativeQueue<int>.ParallelWriter IgnitionEvents;
+    [WriteOnly] public NativeList<int>.ParallelWriter IgnitionEvents;
 
     public void Execute(int index)
     {
@@ -80,7 +80,7 @@ namespace SolarWeb.Pneuma.Jobs.Combustion
 
             if (fuelPercentage >= (double)LowerExplosiveLimit[g] && fuelPercentage <= (double)UpperExplosiveLimit[g])
             {
-              IgnitionEvents.Enqueue(rIdx);
+              IgnitionEvents.AddNoResize(rIdx);
               return;
             }
           }

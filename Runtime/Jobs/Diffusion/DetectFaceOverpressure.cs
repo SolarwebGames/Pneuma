@@ -16,7 +16,7 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
     [ReadOnly] public NativeArray<float> FaceMaxPressureDeltaKpa;
     public int SentinelRegionIndex;
 
-    [WriteOnly] public NativeQueue<OverpressureEvent>.ParallelWriter OverpressureEvents;
+    [WriteOnly] public NativeList<OverpressureEvent>.ParallelWriter OverpressureEvents;
 
     public void Execute(int fIdx)
     {
@@ -31,7 +31,7 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
 
       if (deltaP > maxDeltaP)
       {
-        OverpressureEvents.Enqueue(new OverpressureEvent
+        OverpressureEvents.AddNoResize(new OverpressureEvent
         {
           IsFaceEvent = true,
           Index = fIdx,

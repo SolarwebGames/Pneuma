@@ -50,7 +50,7 @@ namespace SolarWeb.Pneuma.Simulation
         return;
       }
 
-      State.DynamicRegions.PendingSplitWorldIndices.Enqueue(worldIdx);
+      State.DynamicRegions.PendingSplitWorldIndices.Add(worldIdx);
     }
 
     /// <summary>
@@ -60,8 +60,10 @@ namespace SolarWeb.Pneuma.Simulation
     /// </summary>
     public void ProcessQueue()
     {
-      while (State.DynamicRegions.PendingSplitWorldIndices.TryDequeue(out int worldIdx))
-        ProcessSplit(worldIdx);
+      var splitIndices = State.DynamicRegions.PendingSplitWorldIndices;
+      for (int i = 0; i < splitIndices.Length; i++)
+        ProcessSplit(splitIndices[i]);
+      splitIndices.Clear();
 
       while (State.Events.PendingInjections.TryDequeue(out var req))
         ProcessInjection(req);
@@ -73,8 +75,10 @@ namespace SolarWeb.Pneuma.Simulation
     /// </summary>
     public void AbsorbEquilibrated()
     {
-      while (State.DynamicRegions.MergeQueue.TryDequeue(out int dynRegIdx))
-        AbsorbRegion(dynRegIdx);
+      var mergeQueue = State.DynamicRegions.MergeQueue;
+      for (int i = 0; i < mergeQueue.Length; i++)
+        AbsorbRegion(mergeQueue[i]);
+      mergeQueue.Clear();
     }
 
     // ── Split ───────────────────────────────────────────────────────────────
