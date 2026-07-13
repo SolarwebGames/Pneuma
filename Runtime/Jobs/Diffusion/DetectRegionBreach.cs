@@ -32,7 +32,7 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
 
     [ReadOnly] public NativeArray<int> SimToWorldIndex;
 
-    public NativeQueue<int>.ParallelWriter PendingSplitWorldIndices;
+    public NativeList<int>.ParallelWriter PendingSplitWorldIndices;
 
     public int GasCount;
     public int FaceStride;
@@ -65,8 +65,8 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
       {
         int sA = RegionFaceToCellSimA[offset + i];
         int sB = RegionFaceToCellSimB[offset + i];
-        if (sA != SentinelCellIndex) PendingSplitWorldIndices.Enqueue(SimToWorldIndex[sA]);
-        if (sB != SentinelCellIndex) PendingSplitWorldIndices.Enqueue(SimToWorldIndex[sB]);
+        if (sA != SentinelCellIndex) PendingSplitWorldIndices.AddNoResize(SimToWorldIndex[sA]);
+        if (sB != SentinelCellIndex) PendingSplitWorldIndices.AddNoResize(SimToWorldIndex[sB]);
       }
     }
   }

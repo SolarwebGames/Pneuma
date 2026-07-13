@@ -202,7 +202,23 @@ namespace SolarWeb.Pneuma.Simulation
       for (int f = 0; f < config.CellFaces.Count; f++)
       {
         var face = config.CellFaces[f];
+
+        if (face.CellA < 0 || face.CellA >= config.CellCount)
+        {
+          continue;
+        }
+
         int regA = newGrid.GridLookups.WorldToRegionIndex[config.CellData[face.CellA].WorldIndex];
+
+        if (face.CellB < 0 || face.CellB >= config.CellCount)
+        {
+          if (regA >= 0 && regA != newGrid.SentinelRegionIndex)
+          {
+            isEnclosingCell[face.CellA] = true;
+          }
+          continue;
+        }
+
         int regB = newGrid.GridLookups.WorldToRegionIndex[config.CellData[face.CellB].WorldIndex];
         if (regA != regB)
         {
@@ -493,9 +509,9 @@ namespace SolarWeb.Pneuma.Simulation
       grid.RegionPlantStates.Initialize(grid.RegionStride, config.PlantProfileCount);
 
       // Initialize high-level dynamic and event buffers
-      grid.DynamicRegions.Initialize(AtmosphereGrid.MaxDynRegions);
+      grid.DynamicRegions.Initialize(AtmosphereGrid.MaxDynRegions, grid.WorldCellCount);
       grid.DynamicFaces.Initialize(64, grid.GasCount);
-      grid.Events.Initialize();
+      grid.Events.Initialize(grid.RegionStride, regionFaceCount);
 
       // Initialize structural properties to zero for aggregation
       for (int i = 0; i < grid.RegionStride; i++)

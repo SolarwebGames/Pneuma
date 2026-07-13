@@ -10,18 +10,23 @@ namespace SolarWeb.Pneuma.Grid
     public NativeArray<int> FaceStart;
     public NativeArray<int> FaceCount;
 
-    public NativeQueue<int> MergeQueue;
-    public NativeQueue<int> PendingSplitWorldIndices;
+    // Fixed-capacity lists rather than NativeQueue: written via ParallelWriter.AddNoResize from
+    // Burst jobs, drained/Cleared once per tick on the main thread. See AtmosphereEvents.cs for why.
+    public NativeList<int> MergeQueue;
+    public NativeList<int> PendingSplitWorldIndices;
 
-    public void Initialize(int maxDynRegions)
+    public void Initialize(int maxDynRegions, int maxWorldCells)
     {
       Parent = new NativeArray<int>(maxDynRegions, Allocator.Persistent);
       WorldIdx = new NativeArray<int>(maxDynRegions, Allocator.Persistent);
       FaceStart = new NativeArray<int>(maxDynRegions, Allocator.Persistent);
       FaceCount = new NativeArray<int>(maxDynRegions, Allocator.Persistent);
 
-      MergeQueue = new NativeQueue<int>(Allocator.Persistent);
-      PendingSplitWorldIndices = new NativeQueue<int>(Allocator.Persistent);
+      // At most one merge request per dynamic region slot.
+      MergeQueue = new NativeList<int>(maxDynRegions, Allocator.Persistent);
+      // Split requests are keyed by world cell index (from breach/bloom detection), so the true
+      // worst case is one entry per world cell.
+      PendingSplitWorldIndices = new NativeList<int>(maxWorldCells, Allocator.Persistent);
 
       for (int i = 0; i < maxDynRegions; i++)
       {
