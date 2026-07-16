@@ -6,15 +6,15 @@ using Unity.Mathematics;
 namespace SolarWeb.Pneuma.Jobs.Thermal
 {
   [BurstCompile(OptimizeFor = OptimizeFor.Performance)]
-  public struct ApplyStructuralFaceThermalFlux : IJobParallelForDefer
+  public struct ApplyEnclosingFaceThermalFlux : IJobParallelForDefer
   {
     [ReadOnly] public NativeArray<int> RegionFaceOffsets, RegionFaceCounts, RegionFaceIndices;
     [ReadOnly] public NativeArray<int> FaceRegionA;
 
-    [ReadOnly] public NativeArray<float> StructuralFaceThermalFlux;
-    [ReadOnly] public NativeArray<float> StructuralThermalCapacity;
+    [ReadOnly] public NativeArray<float> EnclosingFaceThermalFlux;
+    [ReadOnly] public NativeArray<float> EnclosingThermalCapacity;
 
-    public NativeArray<float> StructuralTemperatureK;
+    public NativeArray<float> EnclosingTemperatureK;
     [ReadOnly] public NativeArray<int> ActiveRegionIndices;
     public int SentinelIndex;
 
@@ -32,15 +32,15 @@ namespace SolarWeb.Pneuma.Jobs.Thermal
       {
         int fIdx = RegionFaceIndices[offset + i];
         float direction = (FaceRegionA[fIdx] == simIdx) ? -1.0f : 1.0f;
-        totalJoulesNet += StructuralFaceThermalFlux[fIdx] * direction;
+        totalJoulesNet += EnclosingFaceThermalFlux[fIdx] * direction;
       }
 
-      float structCapacity = StructuralThermalCapacity[simIdx];
+      float structCapacity = EnclosingThermalCapacity[simIdx];
 
       if (structCapacity > 1e-6f)
       {
         float deltaT = totalJoulesNet / structCapacity;
-        StructuralTemperatureK[simIdx] = math.max(1f, StructuralTemperatureK[simIdx] + deltaT);
+        EnclosingTemperatureK[simIdx] = math.max(1f, EnclosingTemperatureK[simIdx] + deltaT);
       }
     }
   }

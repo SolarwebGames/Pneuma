@@ -12,7 +12,7 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
     [ReadOnly] public NativeArray<float> PressureKpa;
     [ReadOnly] public NativeArray<float> MaxPressureKpa;
 
-    [WriteOnly] public NativeQueue<OverpressureEvent>.ParallelWriter OverpressureEvents;
+    [WriteOnly] public NativeList<OverpressureEvent>.ParallelWriter OverpressureEvents;
 
     public void Execute(int rIdx)
     {
@@ -20,7 +20,7 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
       float maxP = MaxPressureKpa[rIdx];
       if (pressure > maxP)
       {
-        OverpressureEvents.Enqueue(new OverpressureEvent
+        OverpressureEvents.AddNoResize(new OverpressureEvent
         {
           IsFaceEvent = false,
           Index = rIdx,

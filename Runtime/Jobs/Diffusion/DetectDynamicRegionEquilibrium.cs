@@ -43,7 +43,7 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
     public float TemperatureTolerance;
     public float CompositionTolerance;
 
-    public NativeQueue<int>.ParallelWriter MergeQueue;
+    public NativeList<int>.ParallelWriter MergeQueue;
 
     public void Execute()
     {
@@ -94,7 +94,7 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
 
         EquilibriumTicks[dynRegIdx]++;
         if (EquilibriumTicks[dynRegIdx] >= RequiredEquilibriumTicks)
-          MergeQueue.Enqueue(dynRegIdx);
+          MergeQueue.AddNoResize(dynRegIdx);
       }
     }
   }

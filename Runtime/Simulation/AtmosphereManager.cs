@@ -283,7 +283,7 @@ namespace SolarWeb.Pneuma.Simulation
 			dynamicAdvectiveHandle = Complete_DynamicAdvectiveThermal(dynamicAdvectiveHandle);
 
 			var thermalDone = RegionDiffusion.DoStructuralThermalPasses(timeStep, dynamicAdvectiveHandle);
-			thermalDone = Complete_StructuralThermal(thermalDone);
+			thermalDone = Complete_StructureAndMassThermal(thermalDone);
 
 			// Reactions depend on fully updated region state
 			var regionHandle = RegionReactions.DoProcessCombustion(timeStep, thermalDone);
@@ -381,7 +381,7 @@ namespace SolarWeb.Pneuma.Simulation
 		private static JobHandle Complete_DynamicConductiveThermal(JobHandle h) { if (SequentialMode) h.Complete(); return h; }
 		private static JobHandle Complete_RegionAdvectiveThermal(JobHandle h) { if (SequentialMode) h.Complete(); return h; }
 		private static JobHandle Complete_DynamicAdvectiveThermal(JobHandle h) { if (SequentialMode) h.Complete(); return h; }
-		private static JobHandle Complete_StructuralThermal(JobHandle h) { if (SequentialMode) h.Complete(); return h; }
+		private static JobHandle Complete_StructureAndMassThermal(JobHandle h) { if (SequentialMode) h.Complete(); return h; }
 		private static JobHandle Complete_Combustion(JobHandle h) { if (SequentialMode) h.Complete(); return h; }
 		private static JobHandle Complete_PhaseTransitions(JobHandle h) { if (SequentialMode) h.Complete(); return h; }
 		private static JobHandle Complete_SolidPhaseTransitions(JobHandle h) { if (SequentialMode) h.Complete(); return h; }

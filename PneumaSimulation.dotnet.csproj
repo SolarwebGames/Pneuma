@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <OutputType>Library</OutputType>
     <RootNamespace>SolarWeb.Pneuma</RootNamespace>
-    <AssemblyName>PneumaSimulation</AssemblyName>
+    <AssemblyName>SolarWeb.Pneuma.Simulation</AssemblyName>
     <TargetFramework>net472</TargetFramework>
     <LangVersion>12.0</LangVersion>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -30,10 +30,4 @@
   <ItemGroup>
     <Compile Include="Runtime\Simulation\**\*.cs" />
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="../Kalyphos/Mod/1.6/Assemblies/" />
-    <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="../Kalyphos/Mod/1.6/Assemblies/" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
-  </Target>
-
 </Project>

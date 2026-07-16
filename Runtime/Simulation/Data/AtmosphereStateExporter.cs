@@ -94,7 +94,7 @@ namespace SolarWeb.Pneuma.Simulation.Data
       {
         if (r == State.SentinelRegionIndex) continue;
 
-        sb.AppendLine($"    <Region id=\"{r}\" tempK=\"{State.RegionPhysicsBuffer.TemperatureK[r]:F2}\" structTempK=\"{State.RegionPhysicsBuffer.StructuralTemperatureK[r]:F2}\"");
+        sb.AppendLine($"    <Region id=\"{r}\" tempK=\"{State.RegionPhysicsBuffer.TemperatureK[r]:F2}\" enclosingTempK=\"{State.RegionPhysicsBuffer.EnclosingTemperatureK[r]:F2}\" internalMassTempK=\"{State.RegionPhysicsBuffer.InternalMassTemperatureK[r]:F2}\"");
       }
       sb.AppendLine("  </ThermalData>");
     }

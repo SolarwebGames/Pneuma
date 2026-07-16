@@ -27,7 +27,7 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
     public float BloomPressureRatio;
     public float BloomAbsoluteKpa;
 
-    public NativeQueue<int>.ParallelWriter SplitQueue;
+    public NativeList<int>.ParallelWriter SplitQueue;
 
     public void Execute(int i)
     {
@@ -69,7 +69,7 @@ namespace SolarWeb.Pneuma.Jobs.Diffusion
         if (neighborSimIdx != SentinelCellIndex)
         {
           int neighborWorldIdx = SimToWorldIndex[neighborSimIdx];
-          SplitQueue.Enqueue(neighborWorldIdx);
+          SplitQueue.AddNoResize(neighborWorldIdx);
         }
       }
     }

@@ -41,7 +41,7 @@ namespace SolarWeb.Pneuma.Grid
     public NativeArray<float> FaceGasFlux;
     public NativeArray<float> FaceTotalGasFlux;
     public NativeArray<float> FaceThermalFlux;
-    public NativeArray<float> StructuralFaceThermalFlux; // J per tick, struct-to-struct across face
+    public NativeArray<float> EnclosingFaceThermalFlux; // J per tick, struct-to-struct across face
 
     /// <summary>
     /// Per-region-face offset into RegionFaceToCellSimA/B flat arrays.
@@ -90,7 +90,7 @@ namespace SolarWeb.Pneuma.Grid
       FaceGasFlux.Resize(faceStride * gasCount);
       FaceTotalGasFlux.Resize(faceStride);
       FaceThermalFlux.Resize(faceStride);
-      StructuralFaceThermalFlux.Resize(faceStride);
+      EnclosingFaceThermalFlux.Resize(faceStride);
 
       RegionFaceOffsets.Resize(regionStride);
       RegionFaceCounts.Resize(regionStride);
@@ -128,7 +128,7 @@ namespace SolarWeb.Pneuma.Grid
       FaceGasFlux.SafeDispose();
       FaceTotalGasFlux.SafeDispose();
       FaceThermalFlux.SafeDispose();
-      StructuralFaceThermalFlux.SafeDispose();
+      EnclosingFaceThermalFlux.SafeDispose();
       RegionFaceOffsets.SafeDispose();
       RegionFaceCounts.SafeDispose();
       RegionFaceIndices.SafeDispose();

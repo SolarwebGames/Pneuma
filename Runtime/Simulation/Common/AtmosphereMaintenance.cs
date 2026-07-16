@@ -31,7 +31,8 @@ namespace SolarWeb.Pneuma.Simulation
       State.RegionGasComposition.TotalUMoles[State.SentinelRegionIndex] = env.TotalUMolesInOneCell;
       State.RegionGasComposition.PressureKpa[State.SentinelRegionIndex] = env.TotalPressureKpa;
       State.RegionPhysicsBuffer.TemperatureK[State.SentinelRegionIndex] = env.TemperatureK;
-      State.RegionPhysicsBuffer.StructuralTemperatureK[State.SentinelRegionIndex] = env.TemperatureK;
+      State.RegionPhysicsBuffer.EnclosingTemperatureK[State.SentinelRegionIndex] = env.TemperatureK;
+      State.RegionPhysicsBuffer.InternalMassTemperatureK[State.SentinelRegionIndex] = env.TemperatureK;
       return default;
     }
 
